@@ -1,21 +1,26 @@
-import defaultTheme from 'tailwindcss/defaultTheme';
+// tailwind.config.js
 import forms from '@tailwindcss/forms';
+import typography from '@tailwindcss/typography';
 
-/** @type {import('tailwindcss').Config} */
 export default {
-    content: [
-        './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
-        './storage/framework/views/*.php',
-        './resources/views/**/*.blade.php',
-    ],
-
-    theme: {
-        extend: {
-            fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-            },
-        },
+  content: ['./resources/**/*.blade.php','./resources/**/*.js'],
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['"Cormorant Garamond"','serif'],
+        script:  ['"Pinyon Script"','cursive'],
+        hand:    ['"Caveat"','cursive'],
+        sans:    ['"DM Sans"','sans-serif'],
+      },
+      keyframes: {
+        fadeUp:   { from:{opacity:'0',transform:'translateY(24px)'}, to:{opacity:'1',transform:'translateY(0)'} },
+        heroZoom: { from:{transform:'scale(1.06)'}, to:{transform:'scale(1.00)'} },
+      },
+      animation: {
+        'fade-up':   'fadeUp .8s ease both',
+        'hero-zoom': 'heroZoom 20s ease-in-out infinite alternate',
+      },
     },
-
-    plugins: [forms],
+  },
+  plugins: [typography, forms],
 };
