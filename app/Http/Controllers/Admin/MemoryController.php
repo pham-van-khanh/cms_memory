@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\{Memory, Category};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Hash, Storage};
+use Illuminate\Validation\Rule;
 
 class MemoryController extends Controller
 {
@@ -77,7 +78,7 @@ class MemoryController extends Controller
             'memory_date'          => 'nullable|date',
             'opening_quote'        => 'nullable|string',
             'opening_quote_author' => 'nullable|string|max:120',
-            'template'             => 'required|in:classic,scrapbook,film,minimal',
+            'template'             => ['required', Rule::in(array_keys(config('cms.memory_themes')))],
             'color_accent'         => 'nullable|regex:/^#[0-9a-fA-F]{6}$/',
             'password'             => 'nullable|string|min:4',
             'published'            => 'boolean',
