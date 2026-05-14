@@ -259,12 +259,13 @@
                   </div>
 
                   <div>
-                    <label class="text-sm text-stone-700">Heading (supports HTML <em>)</label>
+                    <label class="text-sm text-stone-700">Heading</label>
                     <input type="text" name="heading" value="{{ old('heading',$s->heading) }}" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
                   </div>
 
                   <div>
-                    <label class="text-sm text-stone-700">Content (HTML)</label>
+                    <label class="text-sm text-stone-700">Content (hỗ trợ văn bản thường, xuống dòng tự động)</label>
+                    <div class="text-xs text-stone-500 mt-1">Không cần HTML, hệ thống tự xử lý xuống dòng.</div>
                     <textarea name="content" rows="4" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">{{ old('content',$s->content) }}</textarea>
                   </div>
 
@@ -460,6 +461,7 @@
 
             <div class="mt-3">
               <label class="text-sm text-stone-700">Content</label>
+              <div class="text-xs text-stone-500 mt-1">Bạn có thể nhập bình thường, không cần biết HTML.</div>
               <textarea name="sections[${i}][content]" rows="4" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm"></textarea>
             </div>
 

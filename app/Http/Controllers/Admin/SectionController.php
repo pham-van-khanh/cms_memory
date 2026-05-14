@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\{Memory, MemorySection};
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class SectionController extends Controller
@@ -34,6 +35,7 @@ class SectionController extends Controller
         }
 
         $data = $request->validate($this->rules());
+        $data['content'] = $this->normalizeContent($data['content'] ?? null);
         $data['sort_order'] = ($memory->sections()->max('sort_order') ?? -1) + 1;
         if ($request->hasFile('image'))
             $data['image'] = $request->file('image')->store("memories/{$memory->id}/sections",'public');
@@ -60,6 +62,7 @@ class SectionController extends Controller
 
         $startSort = ($memory->sections()->max('sort_order') ?? -1) + 1;
         foreach ($validated['sections'] as $index => $sectionData) {
+            $sectionData['content'] = $this->normalizeContent($sectionData['content'] ?? null);
             $imageKey = "sections.$index.image";
             if ($request->hasFile($imageKey)) {
                 $sectionData['image'] = $request->file($imageKey)->store("memories/{$memory->id}/sections", 'public');
@@ -76,6 +79,7 @@ class SectionController extends Controller
     public function update(Request $request, MemorySection $section)
     {
         $data = $request->validate($this->rules());
+        $data['content'] = $this->normalizeContent($data['content'] ?? null);
         if ($request->hasFile('image')) {
             Storage::disk('public')->delete($section->image ?? '');
             $data['image'] = $request->file('image')->store("memories/{$section->memory_id}/sections",'public');
@@ -98,4 +102,26 @@ class SectionController extends Controller
             $memory->sections()->where('id',$id)->update(['sort_order'=>$i]);
         return response()->json(['success'=>true]);
     }
+
+    private function normalizeContent(?string $content): ?string
+    {
+        if ($content === null) {
+            return null;
+        }
+
+        $content = trim($content);
+        if ($content === '') {
+            return null;
+        }
+
+        $allowedTags = '<p><br><strong><em><u><a><ul><ol><li><blockquote><h2><h3><h4>';
+        $cleaned = strip_tags($content, $allowedTags);
+
+        if ($cleaned !== '' && Str::contains($cleaned, '<')) {
+            return $cleaned;
+        }
+
+        return nl2br(e($content));
+    }
+
 }
