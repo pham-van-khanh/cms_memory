@@ -317,70 +317,17 @@
       </div>
 
       <div class="mt-8 border-t border-stone-200 pt-6">
-        <h4 class="font-display text-lg text-stone-900">Add new section</h4>
+        <div class="flex items-center justify-between gap-3">
+          <h4 class="font-display text-lg text-stone-900">Add multiple sections</h4>
+          <button type="button" id="add-section-card" class="text-xs px-3 py-2 rounded-xl border border-stone-200 hover:bg-stone-50 transition">+ New section</button>
+        </div>
 
-        <form class="mt-4 space-y-4" method="POST" action="{{ route('admin.memories.sections.store',$memory) }}" enctype="multipart/form-data">
+        <form id="batch-sections-form" class="mt-4 space-y-4" method="POST" action="{{ route('admin.memories.sections.store',$memory) }}" enctype="multipart/form-data">
           @csrf
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="text-sm text-stone-700">Type</label>
-              <select name="type" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm" required>
-                @foreach($sectionTypes as $k=>$label)
-                  <option value="{{ $k }}">{{ $label }}</option>
-                @endforeach
-              </select>
-            </div>
-            <div>
-              <label class="text-sm text-stone-700">Label</label>
-              <input type="text" name="label" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
-            </div>
-          </div>
-
-          <div>
-            <label class="text-sm text-stone-700">Heading (supports HTML <em>)</label>
-            <input type="text" name="heading" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
-          </div>
-
-          <div>
-            <label class="text-sm text-stone-700">Content (HTML)</label>
-            <textarea name="content" rows="4" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm"></textarea>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="text-sm text-stone-700">Image (optional)</label>
-              <input type="file" name="image" accept="image/*" class="mt-2 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm">
-            </div>
-            <div>
-              <label class="text-sm text-stone-700">Image tag / overlay</label>
-              <input type="text" name="image_tag" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
-              <div class="mt-3 flex items-center gap-3">
-                <input type="hidden" name="image_right" value="0">
-                <input type="checkbox" name="image_right" value="1" class="h-4 w-4">
-                <label class="text-sm text-stone-700">Image right</label>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="text-sm text-stone-700">Handwritten note</label>
-              <input type="text" name="handwritten_note" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
-            </div>
-            <div>
-              <label class="text-sm text-stone-700">Time label (timeline)</label>
-              <input type="text" name="time_label" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
-              <label class="text-sm text-stone-700 mt-3 block">Video URL (video)</label>
-              <input type="url" name="video_url" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
-              <label class="text-sm text-stone-700 mt-3 block">Quote author (quote)</label>
-              <input type="text" name="quote_author" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
-            </div>
-          </div>
-
+          <div id="section-cards" class="space-y-4"></div>
           <div class="flex items-center gap-3">
             <button class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs tracking-widest uppercase transition">
-              Add section
+              Add all sections
             </button>
           </div>
         </form>
@@ -472,5 +419,102 @@
       });
     })();
   </script>
+
+  <script>
+    (function(){
+      const addBtn = document.getElementById('add-section-card');
+      const container = document.getElementById('section-cards');
+      if(!addBtn || !container) return;
+
+      const types = @json($sectionTypes);
+      const typeOptions = Object.entries(types)
+        .map(([value,label]) => `<option value="${value}">${label}</option>`)
+        .join('');
+
+      let index = 0;
+      const maxSections = 50;
+
+      function sectionCard(i){
+        return `
+          <div class="border border-stone-200 rounded-2xl p-4 bg-stone-50 section-card">
+            <div class="flex items-center justify-between gap-2">
+              <div class="text-xs tracking-widest uppercase text-stone-500">Section #${i+1}</div>
+              <button type="button" class="remove-section text-xs px-3 py-1 rounded-xl border border-red-200 text-red-700 hover:bg-red-50 transition">Remove</button>
+            </div>
+
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm text-stone-700">Type</label>
+                <select name="sections[${i}][type]" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm" required>${typeOptions}</select>
+              </div>
+              <div>
+                <label class="text-sm text-stone-700">Label</label>
+                <input type="text" name="sections[${i}][label]" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <label class="text-sm text-stone-700">Heading</label>
+              <input type="text" name="sections[${i}][heading]" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
+            </div>
+
+            <div class="mt-3">
+              <label class="text-sm text-stone-700">Content</label>
+              <textarea name="sections[${i}][content]" rows="4" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm"></textarea>
+            </div>
+
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm text-stone-700">Image (optional)</label>
+                <input type="file" name="sections[${i}][image]" accept="image/*" class="mt-2 w-full rounded-xl border border-stone-200 px-3 py-2 text-sm">
+              </div>
+              <div>
+                <label class="text-sm text-stone-700">Image tag / overlay</label>
+                <input type="text" name="sections[${i}][image_tag]" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
+                <div class="mt-3 flex items-center gap-3">
+                  <input type="hidden" name="sections[${i}][image_right]" value="0">
+                  <input type="checkbox" name="sections[${i}][image_right]" value="1" class="h-4 w-4">
+                  <label class="text-sm text-stone-700">Image right</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="text-sm text-stone-700">Handwritten note</label>
+                <input type="text" name="sections[${i}][handwritten_note]" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
+              </div>
+              <div>
+                <label class="text-sm text-stone-700">Time label</label>
+                <input type="text" name="sections[${i}][time_label]" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
+                <label class="text-sm text-stone-700 mt-3 block">Video URL</label>
+                <input type="url" name="sections[${i}][video_url]" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
+                <label class="text-sm text-stone-700 mt-3 block">Quote author</label>
+                <input type="text" name="sections[${i}][quote_author]" class="mt-2 w-full rounded-xl border border-stone-200 px-4 py-2 text-sm">
+              </div>
+            </div>
+          </div>`;
+      }
+
+      function addCard(){
+        if(index >= maxSections){
+          alert(`Bạn chỉ có thể thêm tối đa ${maxSections} section mỗi lần.`);
+          return;
+        }
+        container.insertAdjacentHTML('beforeend', sectionCard(index));
+        index++;
+      }
+
+      addBtn.addEventListener('click', addCard);
+      container.addEventListener('click', (e)=>{
+        if(e.target.classList.contains('remove-section')){
+          e.target.closest('.section-card')?.remove();
+        }
+      });
+
+      addCard();
+    })();
+  </script>
+
 @endsection
 
