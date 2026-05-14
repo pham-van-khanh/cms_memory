@@ -15,6 +15,7 @@ return [
         'garden'    => 'Garden — Botanical Soft',
         'nostalgia' => 'Nostalgia — Analog Cinema',
         'mono'      => 'Mono — Brutalist Clean',
+        'cinelove39'=> 'Cinelove 39 — Romantic Wedding Film',
     ],
     'max_image_kb' => 10240,
     'max_music_kb' => 30720,
