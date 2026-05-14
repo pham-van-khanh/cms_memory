@@ -5,7 +5,7 @@
 @section('content')
   <div class="max-w-5xl mx-auto space-y-6">
     {{-- Update memory --}}
-    <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+    <div class="bg-gradient-to-br from-white via-rose-50/20 to-white rounded-3xl border border-rose-100 p-6 md:p-7 shadow-sm">
       <div class="flex items-start justify-between gap-4">
         <div>
           <h2 class="font-display text-2xl text-stone-900">Edit Memory</h2>
@@ -165,7 +165,7 @@
     </div>
 
     {{-- Gallery uploader --}}
-    <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+    <div class="bg-gradient-to-br from-white via-rose-50/20 to-white rounded-3xl border border-rose-100 p-6 md:p-7 shadow-sm">
       <div class="flex items-end justify-between gap-6">
         <div>
           <h3 class="font-display text-xl text-stone-900">Gallery Upload</h3>
@@ -201,11 +201,11 @@
     </div>
 
     {{-- Sections manager --}}
-    <div class="bg-white rounded-2xl border border-stone-200 p-6 shadow-sm">
+    <div class="bg-gradient-to-br from-white via-rose-50/20 to-white rounded-3xl border border-rose-100 p-6 md:p-7 shadow-sm">
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h3 class="font-display text-xl text-stone-900">Sections Manager</h3>
-          <p class="text-sm text-stone-600 mt-1">Add/edit/delete and reorder story blocks.</p>
+          <h3 class="font-display text-2xl text-stone-900">Sections Manager</h3>
+          <p class="text-sm text-stone-600 mt-1">Add/edit/delete, reorder, và thiết kế section thật đẹp.</p>
         </div>
         <button type="button" id="sections-save"
                 class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs tracking-widest uppercase transition">
@@ -215,10 +215,10 @@
 
       <div id="sections-sort-container" class="mt-6 space-y-5">
         @foreach($memory->sections as $s)
-          <div class="border border-stone-200 rounded-2xl p-4 bg-stone-50 section-item" data-section-id="{{ $s->id }}">
+          <div class="border border-rose-100 rounded-2xl p-4 md:p-5 bg-white shadow-sm section-item section-item-card" data-section-id="{{ $s->id }}">
             <div class="flex items-start justify-between gap-4">
               <div>
-                <div class="text-xs tracking-widest uppercase text-stone-500">{{ ucfirst($s->type) }}</div>
+                <div class="inline-flex items-center rounded-full bg-rose-50 text-rose-700 px-2.5 py-1 text-[10px] tracking-widest uppercase">{{ ucfirst($s->type) }}</div>
                 <div class="mt-1 font-medium text-stone-900">
                   {{ $s->heading ?? $s->label ?? 'Untitled section' }}
                 </div>
@@ -236,7 +236,7 @@
               </div>
             </div>
 
-            <details class="mt-4">
+            <details class="mt-4 rounded-xl border border-stone-100 bg-stone-50/60 p-3">
               <summary class="cursor-pointer text-sm text-stone-600 hover:text-rose-500 transition">Edit section</summary>
               <div class="mt-4">
                 <form class="space-y-4" method="POST" action="{{ route('admin.sections.update',$s) }}" enctype="multipart/form-data">
@@ -317,10 +317,10 @@
         @endforeach
       </div>
 
-      <div class="mt-8 border-t border-stone-200 pt-6">
-        <div class="flex items-center justify-between gap-3">
+      <div class="mt-8 border-t border-rose-100 pt-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <h4 class="font-display text-lg text-stone-900">Add multiple sections</h4>
-          <button type="button" id="add-section-card" class="text-xs px-3 py-2 rounded-xl border border-stone-200 hover:bg-stone-50 transition">+ New section</button>
+          <button type="button" id="add-section-card" class="text-xs px-3 py-2 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 transition">+ New section</button>
         </div>
 
         <form id="batch-sections-form" class="mt-4 space-y-4" method="POST" action="{{ route('admin.memories.sections.store',$memory) }}" enctype="multipart/form-data">
@@ -335,6 +335,14 @@
       </div>
     </div>
   </div>
+
+
+  <style>
+    .section-item-card { transition: transform .2s ease, box-shadow .2s ease; }
+    .section-item-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -12px rgba(190,24,93,.35); }
+    #section-cards .section-card { border: 1px solid #fecdd3; background: linear-gradient(180deg,#fff,#fff7f9); border-radius: 1rem; padding: 1rem; box-shadow: 0 2px 8px rgba(15,23,42,.05); }
+    #section-cards .section-card .text-stone-500 { color: #be185d !important; }
+  </style>
 
   {{-- Theme picker behavior --}}
   <script>
@@ -437,7 +445,7 @@
 
       function sectionCard(i){
         return `
-          <div class="border border-stone-200 rounded-2xl p-4 bg-stone-50 section-card">
+          <div class="section-card">
             <div class="flex items-center justify-between gap-2">
               <div class="text-xs tracking-widest uppercase text-stone-500">Section #${i+1}</div>
               <button type="button" class="remove-section text-xs px-3 py-1 rounded-xl border border-red-200 text-red-700 hover:bg-red-50 transition">Remove</button>
